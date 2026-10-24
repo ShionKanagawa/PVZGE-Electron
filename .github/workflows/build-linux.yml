@@ -31,6 +31,17 @@ jobs:
         run: |
           npm install --global electron-builder
 
+      - name: Align package version with game version
+        run: |
+          VERSION=$(grep -oE '<title>[^<]*\| *[0-9]+\.[0-9]+\.[0-9]+' pvzge_web/docs/index.html \
+                    | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | tail -1 || true)
+          if [ -z "$VERSION" ]; then
+            echo "No version found in game title; keeping current version."
+          else
+            npm pkg set version="$VERSION"
+            echo "Game version = $VERSION"
+          fi
+
       - name: Build
         run: |
           npm install
